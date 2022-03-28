@@ -395,21 +395,24 @@ if ( ! class_exists( '\\SkyVerge\\WooCommerce\\PluginUpdater\\Updater' ) ) :
 				'body'      => $api_params,
 			] );
 
-			if ( ! is_wp_error( $request ) ) {
-				$request = json_decode( wp_remote_retrieve_body( $request ) );
+			if ( is_wp_error( $request ) ) {
+				return false;
 			}
 
-			if ( $request && isset( $request->sections ) ) {
+			$request = json_decode( wp_remote_retrieve_body( $request ) );
+			if ( ! is_object( $request ) ) {
+				return false;
+			}
+
+			if ( isset( $request->sections ) ) {
 				$request->sections = maybe_unserialize( $request->sections );
-			} else {
-				$request = false;
 			}
 
-			if ( $request && isset( $request->banners ) ) {
+			if ( isset( $request->banners ) ) {
 				$request->banners = maybe_unserialize( $request->banners );
 			}
 
-			if ( $request && isset( $request->icons ) ) {
+			if ( isset( $request->icons ) ) {
 				$request->icons = maybe_unserialize( $request->icons );
 			}
 
